@@ -59,17 +59,19 @@ public class RealmStore implements SyncPersistable {
     @Override
     public void deleteRow(final Class<? extends RealmObject> className, final String uid){
 
-        realmInstance.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                if (className != null){
-                    String primaryKEY = realm.getSchema().get(className.getSimpleName()).getPrimaryKey();
-                    RealmResults<? extends RealmObject> rowResult = realm.where(className).equalTo(primaryKEY, uid).findAll();
+        realmInstance.executeTransaction(realm -> {
+            if (className != null) {
+                String primaryKEY = realm.getSchema().get(className.getSimpleName()).getPrimaryKey();
+                RealmResults<? extends RealmObject> rowResult = realm.where(className).equalTo(primaryKEY, uid).findAll();
+
+                if (rowResult != null) {
                     rowResult.deleteAllFromRealm();
-                    closeTransaction();
                 }
+
+                closeTransaction();
             }
         });
+
 
     }
 
@@ -78,12 +80,7 @@ public class RealmStore implements SyncPersistable {
     public void deleteTable(Class<? extends RealmObject> className) {
 
         if (className!=null) {
-            realmInstance.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    realm.deleteAll();
-                }
-            });
+            realmInstance.executeTransaction(realm -> realm.deleteAll());
         }
     }
 
