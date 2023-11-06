@@ -2,12 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 28
+    namespace 'com.contentstack.persistence'
+    compileSdk 31
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 1
-        versionName "0.0.1"
+        versionName "0.0.2"
     }
     buildTypes {
         release {
@@ -15,12 +16,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
+
+
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/Contentstack-3.4.0.jar')
 }
+
+apply from: '../publish-package.gradle'
