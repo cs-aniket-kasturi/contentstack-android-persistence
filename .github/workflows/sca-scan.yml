@@ -7,9 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+
+      - name: Set up ANDROID_HOME
+        run: echo "ANDROID_HOME=${{ github.workspace }}/android-sdk" >> $GITHUB_ENV
+
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ANDROID_HOME: ${{ github.workspace }}/android-sdk
         with:
           args: --fail-on=all
