@@ -1,15 +1,44 @@
 name: Source Composition Analysis Scan
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/gradle@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          args: --fail-on=all
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Authenticate with Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Ensure Gradle wrapper is executable
+        run: chmod +x ./gradlew
+
+      - name: Install Android SDK
+        uses: reactivecircus/android-setup@v2
+        with:
+          components: 'build-tools;29.0.2'
+
+      - name: Install dependencies and run Snyk
+        run: |
+          ./gradlew build
+          snyk test --file=build.gradle --fail-on=all
+
+      - name: Post Snyk Results
+        run: snyk monitor
