@@ -7,6 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11' # or '8' if you prefer
+          distribution: 'temurin' # Eclipse Temurin is a widely used distribution
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle@master
         env:
