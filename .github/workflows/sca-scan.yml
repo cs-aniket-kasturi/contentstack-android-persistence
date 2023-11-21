@@ -15,5 +15,6 @@ jobs:
         uses: snyk/actions/gradle@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ANDROID_HOME: ${{ github.workspace }}/android-sdk
         with:
           args: --fail-on=all
